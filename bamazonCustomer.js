@@ -18,15 +18,20 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
+  displayTable();
 });
 
-connection.query(
-    "SELECT * FROM products",
-    function(err, res) {
-      if (err) throw err;
-      console.table(res);
-      beginPurchase();
-});
+function displayTable() {
+    connection.query(
+        "SELECT * FROM products",
+        function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          beginPurchase();
+    });
+}
+
+
 
 function beginPurchase() {
     inquire.prompt(
@@ -53,28 +58,33 @@ function beginPurchase() {
                       message: "Enter the quantity you would like to purchase: "
                     }
                 ]
-            ).then(function(user) {
-                quantityCheck(user.itemID, user.quantity);
+            ).then(function(data) {
+                quantityCheck(data.itemID, data.quantity);
             })
+        } else if (user.intro == "Exit") {
+            connection.end();
         }
     })
 }
 
 
 
-function quantityCheck(id, quantity) {
+function quantityCheck(id, quantityReq) {
+    
     connection.query(`SELECT stock_quantity FROM products WHERE item_id=${id}`, function(err, res) {
         if (err) throw err;
-        if ((res[0].stock_quantity > 0) && (quantity > res[0].stock_quantity)) {
-            connection.query(`UPDATE products SET stock_quantity=${res[0].stock_quantity}-${quantity} WHERE item_id=${id}`,
+        if ((res[0].stock_quantity > 0) || (parseInt(quantityReq) > res[0].stock_quantity)) {
+            connection.query(`UPDATE products SET stock_quantity=${res[0].stock_quantity}-${quantityReq} WHERE item_id=${id}`,
                 function(err) {
                     if (err) throw err;
                     console.log("\nPurchase successful!\n");
-                    totalCost(id, quantity);
+                    totalCost(id, quantityReq);
+                    displayTable();
                 })
         }
-        else if (res[0].stock_quantity == 0 && quantity < res[0].stock_quantity) {
+        else if ((res[0].stock_quantity) == 0 || (parseInt(quantityReq) < res[0].stock_quantity)) {
             console.log("\nInsufficient quantity available!");
+            displayTable();
         }
     });
 }
@@ -85,7 +95,7 @@ function totalCost(id, quantity) {
     connection.query(`SELECT price FROM products WHERE item_id=${id}`, function(err, res) {
         if (err) throw err;
         console.log(`Total cost: ${res[0].price * quantity}\n`);
-});
+    });
 }
 
 
