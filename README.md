@@ -1,5 +1,5 @@
-## Bamazon
-# Description
+# Bamazon
+## Description
 Bamazon is a command-line application built with Node.js and MySQL that allows a user to construct a 
 MySQL database and then edit said database with three distinct javascript files. bamazonCustomer.js allows 
 the user to view the products table and then make a 'purchase' from that table. 
