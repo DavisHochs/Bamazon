@@ -11,6 +11,6 @@ In created directory, run npm install in order to install necessary node package
 Create tables in MySQL database (can use MySQL Workbench) from the .sql files in this repo
 Now you are ready to take full advantage of Bamazon. From the terminal, you can access/view/edit the database as follows.
 Bamazon Customer functionality: node bamazonCustomer.js bamazonCustomer Demo
-![](bamazoncustomer.gif)
+![](bamazonCustomer.gif)
 
 Everything is written and maintained by me (davishochs). Thanks for visiting!
